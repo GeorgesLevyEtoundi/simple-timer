@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // components
 import TimerDisplay from './TimerDisplay';
@@ -6,8 +6,19 @@ import TimerControls from './TimerControls';
 
 const Timer = () => {
 	const timerRef = useRef(null);
-	const [time, setTime] = useState(0);
+	const [time, setTime] = useState(function () {
+		const time = Number(localStorage.getItem('time'));
+
+		return time || 0;
+	});
 	const [isRunning, setIsRunning] = useState(false);
+
+	useEffect(
+		function () {
+			localStorage.setItem('time', time);
+		},
+		[time]
+	);
 
 	function toggleTimer() {
 		if (isRunning) {
@@ -32,6 +43,7 @@ const Timer = () => {
 		setIsRunning(false);
 		timerRef.current = null;
 		setTime(0);
+		localStorage.removeItem('time');
 	}
 
 	return (
